@@ -16,3 +16,6 @@ ActionController::Session.configure do
   settings.key = "_spider_gazelle_"
   settings.secret = "4f74c0b358d5bab4000dd3c75465dc2c"
 end
+
+APP_NAME = "Spider-Gazelle"
+VERSION  = "1.0.0"
