@@ -1,5 +1,7 @@
 # Spider-Gazelle Application Template
 
+[![Build Status](https://travis-ci.org/spider-gazelle/spider-gazelle.svg?branch=master)](https://travis-ci.org/spider-gazelle/spider-gazelle)
+
 Clone this repository to start building your own spider-gazelle based application
 
 ## Documentation
