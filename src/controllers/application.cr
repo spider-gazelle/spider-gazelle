@@ -1,3 +1,6 @@
+# Require kilt for template support
+require "kilt"
+
 abstract class Application < ActionController::Base
   # https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Date
   def time_now

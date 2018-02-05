@@ -3,6 +3,17 @@ class Welcome < Application
 
   def index
     response.headers["Date"] = time_now
-    render html: "<body><h1>Welcome</h1><br />You're riding on Spider-Gazelle!</body>"
+    welcome_text = "You're riding on Spider-Gazelle!"
+
+    respond_with do
+      html Kilt.render("src/views/welcome.ecr")
+      text "Welcome, #{welcome_text}"
+      json({welcome: welcome_text})
+      xml do
+        XML.build(indent: "  ") do |xml|
+          xml.element("welcome") { xml.text welcome_text }
+        end
+      end
+    end
   end
 end

@@ -1,7 +1,7 @@
 require "option_parser"
 require "./config"
 
-# Defaults
+# Server defaults
 port = 3000
 host = "127.0.0.1"
 
@@ -28,8 +28,19 @@ OptionParser.parse! do |parser|
   end
 end
 
-# Start the server
+# Load the routes
 puts "Launching #{APP_NAME} v#{VERSION}"
 server = ActionController::Server.new(port, host)
+
+# Detect ctr-c to shutdown gracefully
+Signal::INT.trap do
+  puts " > terminating gracefully"
+  server.close
+end
+
+# Start the server
 puts "Listening on tcp://#{host}:#{port}"
 server.run
+
+# Shutdown message
+puts "#{APP_NAME} leaps through the veldt\n"
