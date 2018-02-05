@@ -2,7 +2,6 @@ class Welcome < Application
   base "/"
 
   def index
-    response.headers["Date"] = time_now
     welcome_text = "You're riding on Spider-Gazelle!"
 
     respond_with do
