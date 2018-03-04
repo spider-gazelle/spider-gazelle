@@ -6,6 +6,8 @@ Clone this repository to start building your own spider-gazelle based applicatio
 
 ## Documentation
 
+Detailed documentation and guides available: https://spider-gazelle.net/
+
 * [Action Controller](https://github.com/spider-gazelle/action-controller) base class for building [Controllers](http://guides.rubyonrails.org/action_controller_overview.html)
 * [Active Model](https://github.com/spider-gazelle/active-model) base class for building [ORMs](https://en.wikipedia.org/wiki/Object-relational_mapping)
 * [Habitat](https://github.com/luckyframework/habitat) configuration and settings for Crystal projects
