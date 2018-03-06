@@ -17,4 +17,4 @@ COPY --from=0 /src/bin/app /app
 # Run the app binding on port 8080
 EXPOSE 8080
 ENTRYPOINT ["/app"]
-CMD ["-h","0.0.0.0",-p","8080"]
+CMD ["/app", "-b", "0.0.0.0", "-p", "8080"]
