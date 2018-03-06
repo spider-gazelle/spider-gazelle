@@ -40,4 +40,4 @@ Once compiled you are left with a binary `./app`
 
 * for help `./app --help`
 * viewing routes `./app --routes`
-* run on a different port or host `./app -h 0.0.0.0 -p 80`
+* run on a different port or host `./app -b 0.0.0.0 -p 80`
