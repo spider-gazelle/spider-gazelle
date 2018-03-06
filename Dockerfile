@@ -5,6 +5,9 @@ WORKDIR /src
 # Build App
 RUN shards build --production
 
+# Run tests
+RUN crystal spec
+
 # Extract dependencies
 RUN ldd bin/app | tr -s '[:blank:]' '\n' | grep '^/' | \
     xargs -I % sh -c 'mkdir -p $(dirname deps%); cp % deps%;'
