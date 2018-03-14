@@ -10,6 +10,18 @@ require "./models/*"
 # Server required after application controllers
 require "action-controller/server"
 
+# Optional support for serving of static assests
+static_file_path = ENV["PUBLIC_WWW_PATH"]? || "./www"
+if File.directory?(static_file_path)
+  # Add additional mime types
+  ActionController::FileHandler::MIME_TYPES[".yaml"] = "text/yaml"
+
+  # Check for files if no paths matched in your application
+  ActionController::Server.after(
+    ActionController::FileHandler.new(static_file_path)
+  )
+end
+
 # Configure session cookies
 # NOTE:: Change these from defaults
 ActionController::Session.configure do
