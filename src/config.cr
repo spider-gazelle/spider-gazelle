@@ -22,6 +22,12 @@ if File.directory?(static_file_path)
   )
 end
 
+# Add handlers that should run before your application
+ActionController::Server.before(
+  HTTP::LogHandler.new(STDOUT),
+  HTTP::ErrorHandler.new(ENV["SG_ENV"]? != "production")
+)
+
 # Configure session cookies
 # NOTE:: Change these from defaults
 ActionController::Session.configure do
