@@ -2,7 +2,7 @@ class Welcome < Application
   base "/"
 
   def index
-    welcome_text = "You're riding on Spider-Gazelle!"
+    welcome_text = "You're being trampled by Spider-Gazelle!"
 
     respond_with do
       html Kilt.render("src/views/welcome.ecr")
