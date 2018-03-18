@@ -18,7 +18,7 @@ describe Welcome do
   with_server do
     it "should welcome you" do
       result = curl("GET", "/")
-      result.body.should eq("<!DOCTYPE html>\n<html lang=\"en\">\n<head><title>Welcome</title></head>\n<body>You're riding on Spider-Gazelle!</body>\n</html>\n")
+      result.body.includes?("You're being trampled by Spider-Gazelle!").should eq(true)
       result.headers["Date"]?.nil?.should eq(false)
     end
   end
