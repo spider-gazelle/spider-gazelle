@@ -39,7 +39,7 @@ Signal::INT.trap do
 end
 
 # Start the server
-puts "Listening on http://#{host}:#{port}"
+puts "Listening on #{server.print_addresses}"
 server.run
 
 # Shutdown message
