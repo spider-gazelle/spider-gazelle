@@ -9,7 +9,7 @@ describe Welcome do
     welcome = Welcome.new(context("GET", "/"))
 
     # Test the instance methods of the controller
-    welcome.time_now.should contain("GMT")
+    welcome.set_date_header[0].should contain("GMT")
   end
 
   # ==============
