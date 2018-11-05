@@ -1,3 +1,6 @@
+# Require kilt for template support
+require "kilt"
+
 class Welcome < Application
   base "/"
 
