@@ -1,5 +1,3 @@
-# Require kilt for template support
-require "kilt"
 
 class Welcome < Application
   base "/"
@@ -8,7 +6,7 @@ class Welcome < Application
     welcome_text = "You're being trampled by Spider-Gazelle!"
 
     respond_with do
-      html Kilt.render("src/views/welcome.ecr")
+      html template("welcome.ecr")
       text "Welcome, #{welcome_text}"
       json({welcome: welcome_text})
       xml do
