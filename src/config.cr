@@ -34,6 +34,8 @@ end
 ActionController::Session.configure do |settings|
   settings.key = ENV["COOKIE_SESSION_KEY"]? || "_spider_gazelle_"
   settings.secret = ENV["COOKIE_SESSION_SECRET"]? || "4f74c0b358d5bab4000dd3c75465dc2c"
+  # HTTPS only:
+  settings.secure = ENV["SG_ENV"]? == "production"
 end
 
 APP_NAME = "Spider-Gazelle"
