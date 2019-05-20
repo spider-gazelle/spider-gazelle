@@ -10,12 +10,19 @@ require "./models/*"
 # Server required after application controllers
 require "action-controller/server"
 
+# Allows request IDs to be configured for logging
+# You can extend this with additional properties
+class HTTP::Request
+  property id : String?
+end
+
 # Add handlers that should run before your application
 ActionController::Server.before(
   ActionController::LogHandler.new(STDOUT) { |context|
     # Allows for custom tags to be included when logging
     # For example you might want to include a user id here.
     {
+      # `context.request.id` is set in `controllers/application`
       request_id: context.request.id
     }.map { |key, value| " #{key}=#{value}" }.join("")
   },
