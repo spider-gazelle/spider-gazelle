@@ -2,6 +2,12 @@
 require "action-controller"
 require "active-model"
 
+# Allows request IDs to be configured for logging
+# You can extend this with additional properties
+class HTTP::Request
+  property id : String?
+end
+
 # Application code
 require "./controllers/application"
 require "./controllers/*"
@@ -9,12 +15,6 @@ require "./models/*"
 
 # Server required after application controllers
 require "action-controller/server"
-
-# Allows request IDs to be configured for logging
-# You can extend this with additional properties
-class HTTP::Request
-  property id : String?
-end
 
 # Add handlers that should run before your application
 ActionController::Server.before(
