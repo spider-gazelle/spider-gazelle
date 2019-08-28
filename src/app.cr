@@ -2,8 +2,8 @@ require "option_parser"
 require "./config"
 
 # Server defaults
-port = 3000
-host = "127.0.0.1"
+port = (ENV["SG_SERVER_PORT"]? || 3000).to_i
+host = ENV["SG_SERVER_HOST"]? || "127.0.0.1"
 cluster = false
 process_count = 1
 
