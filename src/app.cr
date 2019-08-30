@@ -4,8 +4,8 @@ require "./config"
 # Server defaults
 port = (ENV["SG_SERVER_PORT"]? || 3000).to_i
 host = ENV["SG_SERVER_HOST"]? || "127.0.0.1"
-cluster = false
-process_count = 1
+process_count = (ENV["SG_PROCESS_COUNT"]? || 1).to_i
+cluster = process_count > 1
 
 # Command line options
 OptionParser.parse(ARGV.dup) do |parser|
@@ -15,8 +15,8 @@ OptionParser.parse(ARGV.dup) do |parser|
   parser.on("-p PORT", "--port=PORT", "Specifies the server port") { |p| port = p.to_i }
 
   parser.on("-w COUNT", "--workers=COUNT", "Specifies the number of processes to handle requests") do |w|
-    cluster = true
     process_count = w.to_i
+    cluster = process_count > 1
   end
 
   parser.on("-r", "--routes", "List the application routes") do
