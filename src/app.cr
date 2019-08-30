@@ -38,7 +38,7 @@ puts "Launching #{APP_NAME} v#{VERSION}"
 server = ActionController::Server.new(port, host)
 
 # Start clustering
-#  process count < 0 == `System.cpu_count` but this is not always accurate
+#  process_count < 1 == `System.cpu_count` but this is not always accurate
 server.cluster(process_count, "-w", "--workers") if process_count != 1
 
 terminate = Proc(Signal, Nil).new do |signal|
