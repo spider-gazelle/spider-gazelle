@@ -5,7 +5,6 @@ require "./config"
 port = (ENV["SG_SERVER_PORT"]? || 3000).to_i
 host = ENV["SG_SERVER_HOST"]? || "127.0.0.1"
 process_count = (ENV["SG_PROCESS_COUNT"]? || 1).to_i
-cluster = process_count > 1
 
 # Command line options
 OptionParser.parse(ARGV.dup) do |parser|
@@ -16,7 +15,6 @@ OptionParser.parse(ARGV.dup) do |parser|
 
   parser.on("-w COUNT", "--workers=COUNT", "Specifies the number of processes to handle requests") do |w|
     process_count = w.to_i
-    cluster = process_count > 1
   end
 
   parser.on("-r", "--routes", "List the application routes") do
@@ -40,7 +38,8 @@ puts "Launching #{APP_NAME} v#{VERSION}"
 server = ActionController::Server.new(port, host)
 
 # Start clustering
-server.cluster(process_count, "-w", "--workers") if cluster
+#  process count < 0 == `System.cpu_count` but this is not always accurate
+server.cluster(process_count, "-w", "--workers") if process_count != 1
 
 terminate = Proc(Signal, Nil).new do |signal|
   puts " > terminating gracefully"
