@@ -8,6 +8,9 @@ class HTTP::Request
   property id : String?
 end
 
+# Filter out sensitive params that shouldn't be logged
+filter_params = ["password", "bearer_token"]
+
 # Application code
 require "./controllers/application"
 require "./controllers/*"
@@ -19,7 +22,7 @@ require "action-controller/server"
 # Add handlers that should run before your application
 ActionController::Server.before(
   HTTP::ErrorHandler.new(ENV["SG_ENV"]? != "production"),
-  ActionController::LogHandler.new(STDOUT) { |context|
+  ActionController::LogHandler.new(STDOUT, filter_params) { |context|
     # Allows for custom tags to be included when logging
     # For example you might want to include a user id here.
     {

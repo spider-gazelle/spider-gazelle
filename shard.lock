@@ -2,7 +2,7 @@ version: 1.0
 shards:
   action-controller:
     github: spider-gazelle/action-controller
-    version: 1.8.0
+    version: 1.8.2
 
   active-model:
     github: spider-gazelle/active-model
