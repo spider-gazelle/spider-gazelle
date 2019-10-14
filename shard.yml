@@ -4,7 +4,7 @@ version: 1.0.0
 dependencies:
   action-controller:
     github: spider-gazelle/action-controller
-    version: "~> 1.8"
+    version: "~> 2.0"
   active-model:
     github: spider-gazelle/active-model
 

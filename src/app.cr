@@ -52,6 +52,21 @@ Signal::INT.trap &terminate
 # Docker containers use the term signal
 Signal::TERM.trap &terminate
 
+# Allow signals to change the log level at run-time
+# Turn on DEBUG level logging `kill -s USR1 %PID`
+Signal::USR1.trap do |signal|
+  puts " > Log level changed to DEBUG"
+  ActionController::Base.settings.logger.level = Logger::DEBUG
+  signal.ignore
+end
+
+# Default production log levels (INFO and above) `kill -s USR2 %PID`
+Signal::USR2.trap do |signal|
+  puts " > Log level changed to INFO"
+  ActionController::Base.settings.logger.level = Logger::INFO
+  signal.ignore
+end
+
 # Start the server
 server.run do
   puts "Listening on #{server.print_addresses}"

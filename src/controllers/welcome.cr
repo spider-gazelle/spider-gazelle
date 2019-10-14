@@ -4,6 +4,7 @@ class Welcome < Application
 
   def index
     welcome_text = "You're being trampled by Spider-Gazelle!"
+    logger.warn "logs can be collated using the request ID"
 
     respond_with do
       html template("welcome.ecr")
