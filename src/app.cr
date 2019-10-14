@@ -48,24 +48,22 @@ terminate = Proc(Signal, Nil).new do |signal|
 end
 
 # Detect ctr-c to shutdown gracefully
-Signal::INT.trap &terminate
 # Docker containers use the term signal
+Signal::INT.trap &terminate
 Signal::TERM.trap &terminate
 
 # Allow signals to change the log level at run-time
-# Turn on DEBUG level logging `kill -s USR1 %PID`
-Signal::USR1.trap do |signal|
-  puts " > Log level changed to DEBUG"
-  ActionController::Base.settings.logger.level = Logger::DEBUG
+logging = Proc(Signal, Nil).new do |signal|
+  level = signal.usr1? ? Logger::DEBUG : Logger::INFO
+  puts " > Log level changed to #{level}"
+  ActionController::Base.settings.logger.level = level
   signal.ignore
 end
 
+# Turn on DEBUG level logging `kill -s USR1 %PID`
 # Default production log levels (INFO and above) `kill -s USR2 %PID`
-Signal::USR2.trap do |signal|
-  puts " > Log level changed to INFO"
-  ActionController::Base.settings.logger.level = Logger::INFO
-  signal.ignore
-end
+Signal::USR1.trap &logging
+Signal::USR2.trap &logging
 
 # Start the server
 server.run do
