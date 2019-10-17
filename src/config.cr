@@ -12,7 +12,8 @@ ActionController::Logger.add_tag request_id
 filter_params = ["password", "bearer_token"]
 
 # Default log levels
-ActionController::Base.settings.logger.level = running_in_production ? Logger::INFO : Logger::DEBUG
+logger = ActionController::Base.settings.logger
+logger.level = running_in_production ? Logger::INFO : Logger::DEBUG
 
 # Application code
 require "./controllers/application"
@@ -24,7 +25,7 @@ require "action-controller/server"
 
 # Add handlers that should run before your application
 ActionController::Server.before(
-  HTTP::ErrorHandler.new(ENV["SG_ENV"]? != "production"),
+  HTTP::ErrorHandler.new(!running_in_production),
   ActionController::LogHandler.new(filter_params),
   HTTP::CompressHandler.new
 )
