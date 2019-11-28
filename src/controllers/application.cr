@@ -7,6 +7,7 @@ abstract class Application < ActionController::Base
   # This makes it simple to match client requests with server side logs.
   # When building microservices this ID should be propagated to upstream services.
   def set_request_id
+    logger.client_ip = client_ip
     response.headers["X-Request-ID"] = logger.request_id = UUID.random.to_s
 
     # If this is an upstream service, the ID should be extracted from a request header.

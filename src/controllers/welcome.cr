@@ -1,3 +1,4 @@
+require "xml"
 
 class Welcome < Application
   base "/"

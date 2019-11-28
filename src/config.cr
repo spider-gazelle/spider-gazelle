@@ -6,6 +6,7 @@ running_in_production = ENV["SG_ENV"]? == "production"
 
 # Logging configuration
 ActionController::Logger.add_tag request_id
+ActionController::Logger.add_tag client_ip
 # ActionController::Logger.add_tag user_id
 
 # Filter out sensitive params that shouldn't be logged
@@ -25,7 +26,7 @@ require "action-controller/server"
 
 # Add handlers that should run before your application
 ActionController::Server.before(
-  HTTP::ErrorHandler.new(!running_in_production),
+  ActionController::ErrorHandler.new(!running_in_production, ["X-Request-ID"]),
   ActionController::LogHandler.new(filter_params),
   HTTP::CompressHandler.new
 )
