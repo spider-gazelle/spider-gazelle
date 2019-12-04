@@ -11,6 +11,7 @@ ActionController::Logger.add_tag client_ip
 
 # Filter out sensitive params that shouldn't be logged
 filter_params = ["password", "bearer_token"]
+keeps_headers = ["X-Request-ID"]
 
 # Default log levels
 logger = ActionController::Base.settings.logger
@@ -26,7 +27,7 @@ require "action-controller/server"
 
 # Add handlers that should run before your application
 ActionController::Server.before(
-  ActionController::ErrorHandler.new(!running_in_production, ["X-Request-ID"]),
+  ActionController::ErrorHandler.new(!running_in_production, keeps_headers),
   ActionController::LogHandler.new(filter_params),
   HTTP::CompressHandler.new
 )
