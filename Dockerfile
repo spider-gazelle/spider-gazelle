@@ -3,10 +3,7 @@ ADD . /src
 WORKDIR /src
 
 # Build App
-RUN shards build --production
-
-# Run tests
-RUN crystal spec
+RUN shards build --error-trace --production
 
 # Extract dependencies
 RUN ldd bin/app | tr -s '[:blank:]' '\n' | grep '^/' | \
@@ -14,6 +11,8 @@ RUN ldd bin/app | tr -s '[:blank:]' '\n' | grep '^/' | \
 
 # Build a minimal docker image
 FROM scratch
+WORKDIR /
+ENV PATH=$PATH:/
 COPY --from=0 /src/deps /
 COPY --from=0 /src/bin/app /app
 
@@ -21,6 +20,7 @@ COPY --from=0 /src/bin/app /app
 # or any other external service where DNS is used to connect.
 COPY --from=0 /lib/x86_64-linux-gnu/libnss_dns.so.2 /lib/x86_64-linux-gnu/libnss_dns.so.2
 COPY --from=0 /lib/x86_64-linux-gnu/libresolv.so.2 /lib/x86_64-linux-gnu/libresolv.so.2
+COPY --from=0 /etc/hosts /etc/hosts
 
 # Run the app binding on port 8080
 EXPOSE 8080
