@@ -1,5 +1,4 @@
 require "option_parser"
-require "./config"
 
 # Server defaults
 port = (ENV["SG_SERVER_PORT"]? || 3000).to_i
@@ -35,6 +34,10 @@ end
 
 # Load the routes
 puts "Launching #{APP_NAME} v#{VERSION}"
+
+# Requiring config here ensures that the option parser runs before
+# attempting to connect to databases etc.
+require "./config"
 server = ActionController::Server.new(port, host)
 
 # (process_count < 1) == `System.cpu_count` but this is not always accurate
