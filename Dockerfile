@@ -22,6 +22,11 @@ COPY --from=0 /lib/x86_64-linux-gnu/libnss_dns.so.2 /lib/x86_64-linux-gnu/libnss
 COPY --from=0 /lib/x86_64-linux-gnu/libresolv.so.2 /lib/x86_64-linux-gnu/libresolv.so.2
 COPY --from=0 /etc/hosts /etc/hosts
 
+# This is required for Timezone support
+COPY --from=0 /usr/share/zoneinfo/ /usr/share/zoneinfo/
+# COPY --from=0 /usr/share/lib/zoneinfo/ /usr/share/lib/zoneinfo/
+# COPY --from=0 /usr/lib/locale/TZ/ /usr/lib/locale/TZ/
+
 # Run the app binding on port 8080
 EXPOSE 8080
 ENTRYPOINT ["/app"]
