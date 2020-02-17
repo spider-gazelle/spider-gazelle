@@ -1,9 +1,10 @@
 require "option_parser"
+require "./constants"
 
 # Server defaults
-port = (ENV["SG_SERVER_PORT"]? || 3000).to_i
-host = ENV["SG_SERVER_HOST"]? || "127.0.0.1"
-process_count = (ENV["SG_PROCESS_COUNT"]? || 1).to_i
+port = App::DEFAULT_PORT
+host = App::DEFAULT_HOST
+process_count = App::DEFAULT_PROCESS_COUNT
 
 # Command line options
 OptionParser.parse(ARGV.dup) do |parser|
@@ -22,7 +23,7 @@ OptionParser.parse(ARGV.dup) do |parser|
   end
 
   parser.on("-v", "--version", "Display the application version") do
-    puts "#{APP_NAME} v#{VERSION}"
+    puts "#{App::NAME} v#{App::VERSION}"
     exit 0
   end
 
@@ -45,7 +46,7 @@ OptionParser.parse(ARGV.dup) do |parser|
 end
 
 # Load the routes
-puts "Launching #{APP_NAME} v#{VERSION}"
+puts "Launching #{App::NAME} v#{App::VERSION}"
 
 # Requiring config here ensures that the option parser runs before
 # attempting to connect to databases etc.
@@ -86,4 +87,4 @@ server.run do
 end
 
 # Shutdown message
-puts "#{APP_NAME} leaps through the veldt\n"
+puts "#{App::NAME} leaps through the veldt\n"
