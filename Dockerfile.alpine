@@ -2,6 +2,10 @@ FROM crystallang/crystal:0.33.0-alpine
 ADD . /src
 WORKDIR /src
 
+# Install any additional dependencies
+# RUN apk update
+# RUN apk add libssh2 libssh2-dev
+
 # Build App
 RUN shards build --error-trace --production
 

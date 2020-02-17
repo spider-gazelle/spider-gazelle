@@ -2,6 +2,11 @@ FROM crystallang/crystal:latest
 ADD . /src
 WORKDIR /src
 
+# Install any additional dependencies
+# RUN apt-get update
+# RUN apt-get install --no-install-recommends -y iputils-ping curl
+# RUN rm -rf /var/lib/apt/lists/*
+
 # Build App
 RUN shards build --error-trace --production
 
