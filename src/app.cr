@@ -70,9 +70,9 @@ Signal::TERM.trap &terminate
 
 # Allow signals to change the log level at run-time
 logging = Proc(Signal, Nil).new do |signal|
-  level = signal.usr1? ? Logger::DEBUG : Logger::INFO
+  level = signal.usr1? ? Log::Severity::Debug : Log::Severity::Info
   puts " > Log level changed to #{level}"
-  ActionController::Base.settings.logger.level = level
+  Log.builder.bind "#{App::NAME}.*", level, App::LOG_BACKEND
   signal.ignore
 end
 

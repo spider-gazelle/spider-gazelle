@@ -3,19 +3,6 @@ require "action-controller"
 require "active-model"
 require "./constants"
 
-# Logging configuration
-ActionController::Logger.add_tag request_id
-ActionController::Logger.add_tag client_ip
-# ActionController::Logger.add_tag user_id
-
-# Filter out sensitive params that shouldn't be logged
-filter_params = ["password", "bearer_token"]
-keeps_headers = ["X-Request-ID"]
-
-# Default log levels
-logger = ActionController::Base.settings.logger
-logger.level = App.running_in_production? ? Logger::INFO : Logger::DEBUG
-
 # Application code
 require "./controllers/application"
 require "./controllers/*"
@@ -24,9 +11,18 @@ require "./models/*"
 # Server required after application controllers
 require "action-controller/server"
 
+# Configure logging
+Log.builder.bind "*", :warning, App::LOG_BACKEND
+Log.builder.bind "action-controller.*", :info, App::LOG_BACKEND
+Log.builder.bind "#{App::NAME}.*", :info, App::LOG_BACKEND
+
+# Filter out sensitive params that shouldn't be logged
+filter_params = ["password", "bearer_token"]
+keeps_headers = ["X-Request-ID"]
+
 # Add handlers that should run before your application
 ActionController::Server.before(
-  ActionController::ErrorHandler.new(!App.running_in_production?, keeps_headers),
+  ActionController::ErrorHandler.new(App.running_in_production?, keeps_headers),
   ActionController::LogHandler.new(filter_params),
   HTTP::CompressHandler.new
 )
