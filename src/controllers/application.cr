@@ -1,8 +1,8 @@
 require "uuid"
 
 abstract class Application < ActionController::Base
-  # Configure your applications log
-  # ameba:disable Style/ConstantNames
+  # Configure your log source name
+  # NOTE:: this is chaining from App::Log
   Log = ::App::Log.for("controller")
 
   before_action :set_request_id

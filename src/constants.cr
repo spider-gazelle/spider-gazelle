@@ -4,7 +4,6 @@ module App
   NAME    = "Spider-Gazelle"
   VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
 
-  # ameba:disable Style/ConstantNames
   Log         = ::Log.for(NAME)
   LOG_BACKEND = ActionController.default_backend
 
