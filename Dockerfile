@@ -1,11 +1,28 @@
-FROM crystallang/crystal:latest
+FROM crystallang/crystal:0.34.0-alpine
 ADD . /src
 WORKDIR /src
 
+# Add trusted CAs for communicating with external services
+RUN apk update && apk add --no-cache ca-certificates tzdata && update-ca-certificates
+
 # Install any additional dependencies
-# RUN apt-get update
-# RUN apt-get install --no-install-recommends -y iputils-ping curl
-# RUN rm -rf /var/lib/apt/lists/*
+# RUN apk add libssh2 libssh2-dev
+
+# Create a non-privileged user
+# defaults are appuser:10001
+ARG IMAGE_UID="10001"
+ENV UID=$IMAGE_UID
+ENV USER=appuser
+
+# See https://stackoverflow.com/a/55757473/12429735RUN
+RUN adduser \
+    --disabled-password \
+    --gecos "" \
+    --home "/nonexistent" \
+    --shell "/sbin/nologin" \
+    --no-create-home \
+    --uid "${UID}" \
+    "${USER}"
 
 # Build App
 RUN shards build --error-trace --production
@@ -20,17 +37,22 @@ WORKDIR /
 ENV PATH=$PATH:/
 COPY --from=0 /src/deps /
 COPY --from=0 /src/bin/app /app
-
-# These are required if your application needs to communicate with a database
-# or any other external service where DNS is used to connect.
-COPY --from=0 /lib/x86_64-linux-gnu/libnss_dns.so.2 /lib/x86_64-linux-gnu/libnss_dns.so.2
-COPY --from=0 /lib/x86_64-linux-gnu/libresolv.so.2 /lib/x86_64-linux-gnu/libresolv.so.2
 COPY --from=0 /etc/hosts /etc/hosts
+
+# These provide certificate chain validation where communicating with external services over TLS
+COPY --from=0 /etc/ca-certificates* /etc/
+COPY --from=0 /etc/ssl/ /etc/ssl/
+COPY --from=0 /usr/share/ca-certificates/ /usr/share/ca-certificates/
 
 # This is required for Timezone support
 COPY --from=0 /usr/share/zoneinfo/ /usr/share/zoneinfo/
-# COPY --from=0 /usr/share/lib/zoneinfo/ /usr/share/lib/zoneinfo/
-# COPY --from=0 /usr/lib/locale/TZ/ /usr/lib/locale/TZ/
+
+# Copy the user information over
+COPY --from=0 /etc/passwd /etc/passwd
+COPY --from=0 /etc/group /etc/group
+
+# Use an unprivileged user.
+USER appuser:appuser
 
 # Run the app binding on port 8080
 EXPOSE 8080
