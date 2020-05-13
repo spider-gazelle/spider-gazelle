@@ -1,6 +1,7 @@
 # Application dependencies
 require "action-controller"
 require "active-model"
+require "kilt"
 require "./constants"
 
 # Application code
