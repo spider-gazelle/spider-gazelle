@@ -12,10 +12,16 @@ require "./models/*"
 # Server required after application controllers
 require "action-controller/server"
 
-# Configure logging
-Log.builder.bind "*", :warning, App::LOG_BACKEND
-Log.builder.bind "action-controller.*", :info, App::LOG_BACKEND
-Log.builder.bind "#{App::NAME}.*", :info, App::LOG_BACKEND
+# Configure logging (backend defined in constants.cr)
+if App.running_in_production?
+  log_level = Log::Severity::Info
+  Log.builder.bind "*", :warning, App::LOG_BACKEND
+else
+  log_level = Log::Severity::Debug
+  Log.builder.bind "*", :info, App::LOG_BACKEND
+end
+Log.builder.bind "action-controller.*", log_level, App::LOG_BACKEND
+Log.builder.bind "#{App::NAME}.*", log_level, App::LOG_BACKEND
 
 # Filter out sensitive params that shouldn't be logged
 filter_params = ["password", "bearer_token"]
