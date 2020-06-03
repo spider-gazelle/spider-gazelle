@@ -8,6 +8,10 @@ dependencies:
   active-model:
     github: spider-gazelle/active-model
 
+  # Extends ENV to read values injected by docker and kubernetes secrets
+  secrets-env:
+    github: place-labs/secrets-env
+
   # https://github.com/jeromegn/kilt
   # Generic template interface for Crystal
   kilt:

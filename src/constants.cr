@@ -1,4 +1,5 @@
 require "action-controller/logger"
+require "secrets-env"
 
 module App
   NAME    = "Spider-Gazelle"
