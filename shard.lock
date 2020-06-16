@@ -1,0 +1,42 @@
+version: 2.0
+shards:
+  action-controller:
+    git: https://github.com/spider-gazelle/action-controller.git
+    version: 3.1.5
+
+  active-model:
+    git: https://github.com/spider-gazelle/active-model.git
+    version: 1.8.4
+
+  ameba:
+    git: https://github.com/veelenga/ameba.git
+    version: 0.12.1
+
+  delimiter_tree:
+    git: https://github.com/drujensen/delimiter_tree.git
+    version: 0.1.4
+
+  future:
+    git: https://github.com/crystal-community/future.cr.git
+    version: 0.1.0
+
+  habitat:
+    git: https://github.com/luckyframework/habitat.git
+    version: 0.4.3
+
+  json_mapping:
+    git: https://github.com/crystal-lang/json_mapping.cr.git
+    version: 0.1.0
+
+  kilt:
+    git: https://github.com/jeromegn/kilt.git
+    version: 0.6.0
+
+  secrets-env:
+    git: https://github.com/place-labs/secrets-env.git
+    version: 1.0.0
+
+  yaml_mapping:
+    git: https://github.com/crystal-lang/yaml_mapping.cr.git
+    version: 0.1.0
+
