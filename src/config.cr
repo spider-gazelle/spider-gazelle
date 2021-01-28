@@ -15,7 +15,7 @@ require "action-controller/server"
 # Configure logging (backend defined in constants.cr)
 if App.running_in_production?
   log_level = Log::Severity::Info
-  ::Log.setup "*", :warning, App::LOG_BACKEND
+  ::Log.setup "*", :warn, App::LOG_BACKEND
 else
   log_level = Log::Severity::Debug
   ::Log.setup "*", :info, App::LOG_BACKEND
