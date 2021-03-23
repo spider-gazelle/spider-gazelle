@@ -5,3 +5,4 @@ lib
 app
 *.dwarf
 bin
+.DS_Store
