@@ -4,9 +4,13 @@ version: 1.0.0
 dependencies:
   action-controller:
     github: spider-gazelle/action-controller
-    version: "~> 3.0"
+    version: ~> 4.0
   active-model:
     github: spider-gazelle/active-model
+    version: ~> 3.0
+  future:
+    github: crystal-community/future.cr
+    version: ~> 1.0
 
   # Extends ENV to read values injected by docker and kubernetes secrets
   secrets-env:
