@@ -1,6 +1,0 @@
-language: crystal
-install:
-  - shards install --ignore-crystal-version
-script:
-  - crystal spec
-  - bin/ameba

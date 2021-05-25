@@ -1,6 +1,6 @@
 # Spider-Gazelle Application Template
 
-[![Build Status](https://travis-ci.org/spider-gazelle/spider-gazelle.svg?branch=master)](https://travis-ci.org/spider-gazelle/spider-gazelle)
+[![CI](https://github.com/spider-gazelle/spider-gazelle/actions/workflows/ci.yml/badge.svg)](https://github.com/spider-gazelle/spider-gazelle/actions/workflows/ci.yml)
 
 Clone this repository to start building your own spider-gazelle based application.
 This is a template and as such, Do What the Fuck You Want To
