@@ -1,8 +1,7 @@
-require "xml"
-
 class Welcome < Application
   base "/"
 
+  @[AC::Route::GET("/")]
   def index
     welcome_text = "You're being trampled by Spider-Gazelle!"
     Log.warn { "logs can be collated using the request ID" }
@@ -12,15 +11,18 @@ class Welcome < Application
     # `kill -s USR1 %APP_PID`
     Log.debug { "use signals to change log levels at runtime" }
 
-    respond_with do
-      html template("welcome.ecr")
-      text "Welcome, #{welcome_text}"
-      json({welcome: welcome_text})
-      xml do
-        XML.build(indent: "  ") do |xml|
-          xml.element("welcome") { xml.text welcome_text }
-        end
-      end
-    end
+    welcome_text
+  end
+
+  # For API applications the return value of the function is expected to work with
+  # all of the responder blocks (see application.cr)
+  # the various responses are returned based on the Accepts header
+  @[AC::Route::GET("/api/:example")]
+  @[AC::Route::POST("/api/:example")]
+  @[AC::Route::GET("/api/other/route")]
+  def api(example : Int32)
+    {
+      example_provided: example,
+    }
   end
 end

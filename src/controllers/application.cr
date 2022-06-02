@@ -1,15 +1,18 @@
 require "uuid"
+require "yaml"
 
 abstract class Application < ActionController::Base
   # Configure your log source name
   # NOTE:: this is chaining from App::Log
   Log = ::App::Log.for("controller")
 
-  before_action :set_request_id
-  before_action :set_date_header
+  # framework uses "application/json" by default
+  add_responder("application/yaml") { |io, result| result.to_yaml(io) }
+  add_responder("text/html") { |io, result| result.to_json(io) }
 
   # This makes it simple to match client requests with server side logs.
   # When building microservices this ID should be propagated to upstream services.
+  @[AC::Route::Filter(:before_action)]
   def set_request_id
     request_id = UUID.random.to_s
     Log.context.set(
@@ -24,7 +27,30 @@ abstract class Application < ActionController::Base
     # response.headers["X-Request-ID"] = request_id
   end
 
+  @[AC::Route::Filter(:before_action)]
   def set_date_header
     response.headers["Date"] = HTTP.format_time(Time.utc)
+  end
+
+  # handle common errors at a global level
+  # this covers no acceptable response format and not an acceptable post format
+  @[AC::Route::Exception(ActionController::Route::NotAcceptable, status_code: HTTP::Status::NOT_ACCEPTABLE)]
+  @[AC::Route::Exception(AC::Route::UnsupportedMediaType, status_code: HTTP::Status::UNSUPPORTED_MEDIA_TYPE)]
+  def bad_media_type(error)
+    {
+      error:   error.message,
+      accepts: error.accepts,
+    }
+  end
+
+  # this covers a required paramater missing and a bad paramater value / format
+  @[AC::Route::Exception(AC::Route::Param::MissingError, status_code: HTTP::Status::BAD_REQUEST)]
+  @[AC::Route::Exception(AC::Route::Param::ValueError, status_code: HTTP::Status::BAD_REQUEST)]
+  def invalid_param(error)
+    {
+      error:       error.message,
+      parameter:   error.parameter,
+      restriction: error.restriction,
+    }
   end
 end

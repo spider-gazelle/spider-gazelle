@@ -1,29 +1,17 @@
 name: spider-gazelle
-version: 1.0.0
+version: 2.0.0
 
 dependencies:
+  # The server framework
   action-controller:
     github: spider-gazelle/action-controller
-    version: ~> 4.7
-  active-model:
-    github: spider-gazelle/active-model
-    version: ~> 4.0
-  future:
-    github: crystal-community/future.cr
-    version: ~> 1.0
-
-  # Extends ENV to read values injected by docker and kubernetes secrets
-  secrets-env:
-    github: place-labs/secrets-env
-
-  # https://github.com/jeromegn/kilt
-  # Generic template interface for Crystal
-  kilt:
-    github: jeromegn/kilt
+    version: ~> 5.1
 
 development_dependencies:
   ameba:
     github: veelenga/ameba
+  hot_topic:
+    github: jgaskins/hot_topic
 
 # compile target
 targets:

@@ -1,9 +1,10 @@
 require "action-controller/logger"
-require "secrets-env"
 
 module App
-  NAME    = "Spider-Gazelle"
-  VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
+  NAME = "Spider-Gazelle"
+  {% begin %}
+    VERSION = {{ `shards version "#{__DIR__}"`.chomp.stringify.downcase }}
+  {% end %}
 
   Log         = ::Log.for(NAME)
   LOG_BACKEND = ActionController.default_backend
