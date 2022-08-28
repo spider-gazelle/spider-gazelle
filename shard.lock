@@ -2,11 +2,11 @@ version: 2.0
 shards:
   action-controller:
     git: https://github.com/spider-gazelle/action-controller.git
-    version: 5.2.0
+    version: 5.3.0
 
   ameba:
     git: https://github.com/veelenga/ameba.git
-    version: 1.0.1
+    version: 1.1.0
 
   backtracer:
     git: https://github.com/sija/backtracer.cr.git
@@ -27,6 +27,10 @@ shards:
   hot_topic:
     git: https://github.com/jgaskins/hot_topic.git
     version: 0.1.0+git.commit.c4577d949221d535f29162343bf503b578308954
+
+  json-schema:
+    git: https://github.com/spider-gazelle/json-schema.git
+    version: 1.2.0
 
   lucky_router:
     git: https://github.com/luckyframework/lucky_router.git

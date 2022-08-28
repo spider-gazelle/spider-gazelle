@@ -1,8 +1,10 @@
+# description of the welcome klass
 class Welcome < Application
   base "/"
 
+  # A welcome message
   @[AC::Route::GET("/")]
-  def index
+  def index : String
     welcome_text = "You're being trampled by Spider-Gazelle!"
     Log.warn { "logs can be collated using the request ID" }
 
@@ -20,9 +22,9 @@ class Welcome < Application
   @[AC::Route::GET("/api/:example")]
   @[AC::Route::POST("/api/:example")]
   @[AC::Route::GET("/api/other/route")]
-  def api(example : Int32)
+  def api(example : Int32) : NamedTuple(result: Int32)
     {
-      example_provided: example,
+      result: example,
     }
   end
 end

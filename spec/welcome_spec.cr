@@ -36,6 +36,6 @@ describe Welcome do
 
   it "should extract params for you" do
     result = client.post("/api/400")
-    JSON.parse(result.body).should eq({"example_provided" => 400})
+    JSON.parse(result.body).should eq({"result" => 400})
   end
 end
