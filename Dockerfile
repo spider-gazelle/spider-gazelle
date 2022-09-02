@@ -1,20 +1,12 @@
-FROM crystallang/crystal:0.36.0-alpine
-ADD . /src
-WORKDIR /src
+FROM alpine:3.16 as build
+WORKDIR /app
 
-# Add trusted CAs for communicating with external services
-RUN apk update && apk add --no-cache ca-certificates tzdata && update-ca-certificates
-
-# Install any additional dependencies
-# RUN apk add libssh2 libssh2-dev
-
-# Create a non-privileged user
-# defaults are appuser:10001
+# Create a non-privileged user, defaults are appuser:10001
 ARG IMAGE_UID="10001"
 ENV UID=$IMAGE_UID
 ENV USER=appuser
 
-# See https://stackoverflow.com/a/55757473/12429735RUN
+# See https://stackoverflow.com/a/55757473/12429735
 RUN adduser \
     --disabled-password \
     --gecos "" \
@@ -24,37 +16,80 @@ RUN adduser \
     --uid "${UID}" \
     "${USER}"
 
-# Build App
-RUN shards build --error-trace --production
+# Add trusted CAs for communicating with external services
+RUN apk add --no-cache \
+        ca-certificates \
+    && \
+    update-ca-certificates
 
-# Extract dependencies
-RUN ldd bin/app | tr -s '[:blank:]' '\n' | grep '^/' | \
-    xargs -I % sh -c 'mkdir -p $(dirname deps%); cp % deps%;'
+# Add crystal lang
+# can look up packages here: https://pkgs.alpinelinux.org/packages?name=crystal
+RUN apk add \
+  --update \
+  --no-cache \
+  --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
+  --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
+    crystal \
+    shards \
+    yaml-dev \
+    openssl-dev \
+    zlib-dev \
+    tzdata
+
+# Install any additional dependencies
+# RUN apk add libssh2 libssh2-dev
+
+# Install shards for caching
+COPY shard.yml shard.yml
+COPY shard.override.yml shard.override.yml
+COPY shard.lock shard.lock
+
+RUN shards install --production --ignore-crystal-version
+
+# Add src
+COPY ./src /app/src
+
+# Build application
+RUN shards build --production --error-trace
+SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
+
+# Extract binary dependencies (add additional binaries if multiple build targets)
+RUN for binary in /app/bin/*; do \
+        ldd "$binary" | \
+        tr -s '[:blank:]' '\n' | \
+        grep '^/' | \
+        xargs -I % sh -c 'mkdir -p $(dirname deps%); cp % deps%;'; \
+      done
 
 # Build a minimal docker image
 FROM scratch
 WORKDIR /
 ENV PATH=$PATH:/
-COPY --from=0 /src/deps /
-COPY --from=0 /src/bin/app /app
-COPY --from=0 /etc/hosts /etc/hosts
+
+# Copy the user information over
+COPY --from=build etc/passwd /etc/passwd
+COPY --from=build /etc/group /etc/group
+
+# These are required for communicating with external services
+COPY --from=build /etc/hosts /etc/hosts
 
 # These provide certificate chain validation where communicating with external services over TLS
-COPY --from=0 /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 
 # This is required for Timezone support
-COPY --from=0 /usr/share/zoneinfo/ /usr/share/zoneinfo/
+COPY --from=build /usr/share/zoneinfo/ /usr/share/zoneinfo/
 
-# Copy the user information over
-COPY --from=0 /etc/passwd /etc/passwd
-COPY --from=0 /etc/group /etc/group
+# This is your application
+COPY --from=build /app/deps /
+COPY --from=build /app/bin /
 
 # Use an unprivileged user.
 USER appuser:appuser
 
-# Run the app binding on port 8080
-EXPOSE 8080
-ENTRYPOINT ["/app"]
-HEALTHCHECK CMD ["/app", "-c", "http://127.0.0.1:8080/"]
-CMD ["/app", "-b", "0.0.0.0", "-p", "8080"]
+# Spider-gazelle has a built in helper for health checks (change this as desired for your applications)
+HEALTHCHECK CMD ["/app", "-c", "http://127.0.0.1:3000/"]
+
+# Run the app binding on port 3000
+EXPOSE 3000
+CMD ["/app", "-b", "0.0.0.0", "-p", "3000"]
