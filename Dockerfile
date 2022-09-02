@@ -53,7 +53,7 @@ COPY ./src /app/src
 RUN shards build --production --error-trace
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
-# Extract binary dependencies (add additional binaries if multiple build targets)
+# Extract binary dependencies
 RUN for binary in /app/bin/*; do \
         ldd "$binary" | \
         tr -s '[:blank:]' '\n' | \
