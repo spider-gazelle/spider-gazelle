@@ -16,11 +16,21 @@ RUN adduser \
     --uid "${UID}" \
     "${USER}"
 
-# Add trusted CAs for communicating with external services
-RUN apk add --no-cache \
-        ca-certificates \
-    && \
-    update-ca-certificates
+# Add trusted CAs for communicating with external services and required build tooling
+RUN apk add \
+  --update \
+  --no-cache \
+    ca-certificates \
+    yaml-dev \
+    yaml-static \
+    libxml2-dev \
+    openssl-dev \
+    openssl-libs-static \
+    zlib-dev \
+    zlib-static \
+    tzdata
+
+RUN update-ca-certificates
 
 # Add crystal lang
 # can look up packages here: https://pkgs.alpinelinux.org/packages?name=crystal
@@ -30,15 +40,7 @@ RUN apk add \
   --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
   --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
     crystal \
-    shards \
-    yaml-dev \
-    yaml-static \
-    libxml2-dev \
-    openssl-dev \
-    openssl-libs-static \
-    zlib-dev \
-    zlib-static \
-    tzdata
+    shards
 
 # Install any additional dependencies
 # RUN apk add libssh2 libssh2-dev
@@ -96,4 +98,5 @@ HEALTHCHECK CMD ["/app", "-c", "http://127.0.0.1:3000/"]
 
 # Run the app binding on port 3000
 EXPOSE 3000
+ENTRYPOINT ["/app"]
 CMD ["/app", "-b", "0.0.0.0", "-p", "3000"]
