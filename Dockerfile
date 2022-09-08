@@ -56,16 +56,16 @@ RUN shards install --production --ignore-crystal-version
 COPY ./src /app/src
 
 # Build application
-RUN shards build --production --error-trace --static
+RUN shards build --production --release --error-trace
 SHELL ["/bin/ash", "-eo", "pipefail", "-c"]
 
 # Extract binary dependencies (uncomment if not compiling a static build)
-# RUN for binary in /app/bin/*; do \
-#        ldd "$binary" | \
-#        tr -s '[:blank:]' '\n' | \
-#        grep '^/' | \
-#        xargs -I % sh -c 'mkdir -p $(dirname deps%); cp % deps%;'; \
-#      done
+RUN for binary in /app/bin/*; do \
+        ldd "$binary" | \
+        tr -s '[:blank:]' '\n' | \
+        grep '^/' | \
+        xargs -I % sh -c 'mkdir -p $(dirname deps%); cp % deps%;'; \
+    done
 
 # Build a minimal docker image
 FROM scratch
@@ -87,7 +87,7 @@ ENV SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
 COPY --from=build /usr/share/zoneinfo/ /usr/share/zoneinfo/
 
 # This is your application
-# COPY --from=build /app/deps / # uncomment if not compiling a static build
+COPY --from=build /app/deps /
 COPY --from=build /app/bin /
 
 # Use an unprivileged user.
