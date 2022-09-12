@@ -28,6 +28,8 @@ RUN apk add \
     openssl-libs-static \
     zlib-dev \
     zlib-static \
+    libunwind-dev \
+    libunwind-static \
     tzdata
 
 RUN update-ca-certificates
