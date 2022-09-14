@@ -27,4 +27,13 @@ class Welcome < Application
       result: example,
     }
   end
+
+  # this file is built as part of the docker build
+  OPENAPI = YAML.parse(File.exists?("openapi.yml") ? File.read("openapi.yml") : "{}")
+
+  # returns the OpenAPI representation of this service
+  @[AC::Route::GET("/openapi")]
+  def openapi : YAML::Any
+    OPENAPI
+  end
 end

@@ -5,6 +5,7 @@ require "./constants"
 port = App::DEFAULT_PORT
 host = App::DEFAULT_HOST
 process_count = App::DEFAULT_PROCESS_COUNT
+exit_code = nil
 
 # Command line options
 OptionParser.parse(ARGV.dup) do |parser|
@@ -40,18 +41,28 @@ OptionParser.parse(ARGV.dup) do |parser|
   end
 
   parser.on("-d", "--docs", "Outputs OpenAPI documentation for this service") do
-    puts ActionController::OpenAPI.generate_open_api_docs(
+    docs = ActionController::OpenAPI.generate_open_api_docs(
       title: App::NAME,
       version: App::VERSION,
       description: "App description for OpenAPI docs"
     ).to_yaml
-    exit 0
+
+    parser.on("-f FILE", "--file=FILE", "Save the docs to a file") do |file|
+      File.write(file, docs)
+    end
+
+    puts docs
+    exit_code = 0
   end
 
   parser.on("-h", "--help", "Show this help") do
     puts parser
     exit 0
   end
+end
+
+if exit_code
+  exit exit_code.not_nil!
 end
 
 # Load the routes

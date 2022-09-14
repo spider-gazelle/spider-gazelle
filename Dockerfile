@@ -30,6 +30,12 @@ RUN apk add \
     zlib-static \
     libunwind-dev \
     libunwind-static \
+    libevent-dev \
+    libevent-static \
+    libssh2-dev \
+    libssh2-static \
+    lz4-dev \
+    lz4-static \
     tzdata
 
 RUN update-ca-certificates
@@ -52,7 +58,7 @@ COPY shard.yml shard.yml
 COPY shard.override.yml shard.override.yml
 COPY shard.lock shard.lock
 
-RUN shards install --production --ignore-crystal-version
+RUN shards install --production --ignore-crystal-version --skip-postinstall --skip-executables
 
 # Add src
 COPY ./src /app/src
@@ -68,6 +74,9 @@ RUN for binary in /app/bin/*; do \
         grep '^/' | \
         xargs -I % sh -c 'mkdir -p $(dirname deps%); cp % deps%;'; \
     done
+
+# RUN crystal docs --format=json > openapi.yml
+RUN ./bin/app --docs --file=openapi.yml
 
 # Build a minimal docker image
 FROM scratch
@@ -91,6 +100,7 @@ COPY --from=build /usr/share/zoneinfo/ /usr/share/zoneinfo/
 # This is your application
 COPY --from=build /app/deps /
 COPY --from=build /app/bin /
+COPY --from=build /app/openapi.yml /openapi.yml
 
 # Use an unprivileged user.
 USER appuser:appuser

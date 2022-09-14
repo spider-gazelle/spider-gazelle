@@ -1,0 +1,11 @@
+version: '3'
+services:
+  # The Spider-Gazelle service
+  # run: `docker-compose build` to update the service
+  # run: `docker-compose up -d` to launch the service
+  sg:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      SG_ENV: "production"
