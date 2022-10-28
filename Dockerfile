@@ -1,4 +1,4 @@
-FROM alpine:3.16 as build
+FROM 84codes/crystal:latest-alpine as build
 WORKDIR /app
 
 # Create a non-privileged user, defaults are appuser:10001
@@ -16,39 +16,45 @@ RUN adduser \
     --uid "${UID}" \
     "${USER}"
 
-# Add trusted CAs for communicating with external services and required build tooling
+# Add dependencies commonly required for building crystal applications
+# hadolint ignore=DL3018
 RUN apk add \
   --update \
   --no-cache \
+    gcc \
+    make \
+    autoconf \
+    automake \
+    libtool \
+    patch \
     ca-certificates \
     yaml-dev \
     yaml-static \
+    git \
+    bash \
+    iputils \
+    libelf \
+    gmp-dev \
     libxml2-dev \
-    openssl-dev \
-    openssl-libs-static \
+    musl-dev \
+    pcre-dev \
     zlib-dev \
     zlib-static \
     libunwind-dev \
     libunwind-static \
     libevent-dev \
     libevent-static \
-    libssh2-dev \
     libssh2-static \
     lz4-dev \
     lz4-static \
-    tzdata
+    tzdata \
+    curl
+
+# Already included in the image
+# openssl-dev
+# openssl-libs-static
 
 RUN update-ca-certificates
-
-# Add crystal lang
-# can look up packages here: https://pkgs.alpinelinux.org/packages?name=crystal
-RUN apk add \
-  --update \
-  --no-cache \
-  --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
-  --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
-    crystal \
-    shards
 
 # Install any additional dependencies
 # RUN apk add libssh2 libssh2-dev
@@ -75,7 +81,7 @@ RUN for binary in /app/bin/*; do \
         xargs -I % sh -c 'mkdir -p $(dirname deps%); cp % deps%;'; \
     done
 
-# RUN crystal docs --format=json > openapi.yml
+# Generate OpenAPI docs while we still have source code access
 RUN ./bin/app --docs --file=openapi.yml
 
 # Build a minimal docker image
@@ -100,6 +106,8 @@ COPY --from=build /usr/share/zoneinfo/ /usr/share/zoneinfo/
 # This is your application
 COPY --from=build /app/deps /
 COPY --from=build /app/bin /
+
+# Copy the docs into the container, you can serve this file in your app
 COPY --from=build /app/openapi.yml /openapi.yml
 
 # Use an unprivileged user.

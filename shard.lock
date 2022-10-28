@@ -2,11 +2,11 @@ version: 2.0
 shards:
   action-controller:
     git: https://github.com/spider-gazelle/action-controller.git
-    version: 5.3.14
+    version: 5.4.3
 
   ameba:
     git: https://github.com/veelenga/ameba.git
-    version: 1.1.0
+    version: 1.2.0
 
   backtracer:
     git: https://github.com/sija/backtracer.cr.git
