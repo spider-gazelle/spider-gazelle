@@ -62,7 +62,7 @@ OptionParser.parse(ARGV.dup) do |parser|
 end
 
 if exit_code
-  exit exit_code.not_nil!
+  exit exit_code.as(Int32)
 end
 
 # Load the routes

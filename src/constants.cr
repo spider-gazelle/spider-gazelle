@@ -11,6 +11,9 @@ module App
 
   ENVIRONMENT = ENV["SG_ENV"]? || "development"
 
+  # ameba:disable Lint/LiteralsComparison
+  IS_PROUCATION = ENVIRONMENT == "production"
+
   DEFAULT_PORT          = (ENV["SG_SERVER_PORT"]? || 3000).to_i
   DEFAULT_HOST          = ENV["SG_SERVER_HOST"]? || "127.0.0.1"
   DEFAULT_PROCESS_COUNT = (ENV["SG_PROCESS_COUNT"]? || 1).to_i
@@ -21,7 +24,7 @@ module App
   COOKIE_SESSION_SECRET = ENV["COOKIE_SESSION_SECRET"]? || "4f74c0b358d5bab4000dd3c75465dc2c"
 
   def self.running_in_production?
-    ENVIRONMENT == "production"
+    IS_PROUCATION
   end
 
   # flag to indicate if we're outputting trace logs
