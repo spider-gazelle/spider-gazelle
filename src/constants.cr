@@ -9,9 +9,7 @@ module App
   Log         = ::Log.for(NAME)
   LOG_BACKEND = ActionController.default_backend
 
-  ENVIRONMENT = ENV["SG_ENV"]? || "development"
-
-  # ameba:disable Lint/LiteralsComparison
+  ENVIRONMENT   = ENV["SG_ENV"]? || "development"
   IS_PRODUCTION = ENVIRONMENT == "production"
 
   DEFAULT_PORT          = (ENV["SG_SERVER_PORT"]? || 3000).to_i
@@ -28,7 +26,7 @@ module App
   end
 
   # flag to indicate if we're outputting trace logs
-  class_getter trace : Bool = false
+  class_getter? trace : Bool = false
 
   # Registers callbacks for USR1 signal
   #
