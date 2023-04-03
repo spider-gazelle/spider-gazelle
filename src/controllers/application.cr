@@ -32,42 +32,17 @@ abstract class Application < ActionController::Base
     response.headers["Date"] = HTTP.format_time(Time.utc)
   end
 
-  # Provides details on available data formats
-  struct ContentError
-    include JSON::Serializable
-    include YAML::Serializable
-
-    getter error : String
-    getter accepts : Array(String)? = nil
-
-    def initialize(@error, @accepts = nil)
-    end
-  end
-
   # covers no acceptable response format and not an acceptable post format
   @[AC::Route::Exception(AC::Route::NotAcceptable, status_code: HTTP::Status::NOT_ACCEPTABLE)]
   @[AC::Route::Exception(AC::Route::UnsupportedMediaType, status_code: HTTP::Status::UNSUPPORTED_MEDIA_TYPE)]
-  def bad_media_type(error) : ContentError
-    ContentError.new error: error.message.as(String), accepts: error.accepts
-  end
-
-  # Provides details on which parameter is missing or invalid
-  struct ParameterError
-    include JSON::Serializable
-    include YAML::Serializable
-
-    getter error : String
-    getter parameter : String? = nil
-    getter restriction : String? = nil
-
-    def initialize(@error, @parameter = nil, @restriction = nil)
-    end
+  def bad_media_type(error) : AC::Error::ContentResponse
+    AC::Error::ContentResponse.new error: error.message.as(String), accepts: error.accepts
   end
 
   # handles paramater missing or a bad paramater value / format
   @[AC::Route::Exception(AC::Route::Param::MissingError, status_code: HTTP::Status::UNPROCESSABLE_ENTITY)]
   @[AC::Route::Exception(AC::Route::Param::ValueError, status_code: HTTP::Status::BAD_REQUEST)]
-  def invalid_param(error) : ParameterError
-    ParameterError.new error: error.message.as(String), parameter: error.parameter, restriction: error.restriction
+  def invalid_param(error) : AC::Error::ParameterResponse
+    AC::Error::ParameterResponse.new error: error.message.as(String), parameter: error.parameter, restriction: error.restriction
   end
 end

@@ -2,7 +2,7 @@ version: 2.0
 shards:
   action-controller:
     git: https://github.com/spider-gazelle/action-controller.git
-    version: 5.6.3
+    version: 5.6.4
 
   ameba:
     git: https://github.com/veelenga/ameba.git
