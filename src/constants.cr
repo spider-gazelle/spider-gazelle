@@ -40,17 +40,19 @@ module App
   # - `$ kill -USR1 ${the_application_pid}`
   def self.register_severity_switch_signals : Nil
     # Allow signals to change the log level at run-time
-    Signal::USR1.trap do |signal|
-      @@trace = !@@trace
-      level = @@trace ? ::Log::Severity::Trace : (running_in_production? ? ::Log::Severity::Info : ::Log::Severity::Debug)
-      puts " > Log level changed to #{level}"
-      ::Log.builder.bind "#{NAME}.*", level, LOG_BACKEND
+    {% unless flag?(:win32) %}
+      Signal::USR1.trap do |signal|
+        @@trace = !@@trace
+        level = @@trace ? ::Log::Severity::Trace : (running_in_production? ? ::Log::Severity::Info : ::Log::Severity::Debug)
+        puts " > Log level changed to #{level}"
+        ::Log.builder.bind "#{NAME}.*", level, LOG_BACKEND
 
-      # Ignore standard behaviour of the signal
-      signal.ignore
+        # Ignore standard behaviour of the signal
+        signal.ignore
 
-      # we need to re-register our interest in the signal
-      register_severity_switch_signals
-    end
+        # we need to re-register our interest in the signal
+        register_severity_switch_signals
+      end
+    {% end %}
   end
 end

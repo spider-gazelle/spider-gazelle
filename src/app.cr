@@ -77,20 +77,27 @@ server = ActionController::Server.new(port, host)
 # Clustering using processes, there is no forking once crystal threads drop
 server.cluster(process_count, "-w", "--workers") if process_count != 1
 
-terminate = Proc(Signal, Nil).new do |signal|
-  puts " > terminating gracefully"
-  spawn { server.close }
-  signal.ignore
-end
+{% if flag?(:win32) %}
+  Process.on_interrupt do
+    puts " > terminating gracefully"
+    server.close
+  end
+{% else %}
+  terminate = Proc(Signal, Nil).new do |signal|
+    puts " > terminating gracefully"
+    spawn { server.close }
+    signal.ignore
+  end
 
-# Detect ctr-c to shutdown gracefully
-# Docker containers use the term signal
-Signal::INT.trap &terminate
-Signal::TERM.trap &terminate
+  # Detect ctr-c to shutdown gracefully
+  # Docker containers use the term signal
+  Signal::INT.trap &terminate
+  Signal::TERM.trap &terminate
 
-# Allow signals to change the log level at run-time
-# Turn on DEBUG level logging `kill -s USR1 %PID`
-App.register_severity_switch_signals
+  # Allow signals to change the log level at run-time
+  # Turn on DEBUG level logging `kill -s USR1 %PID`
+  App.register_severity_switch_signals
+{% end %}
 
 # Start the server
 server.run do
