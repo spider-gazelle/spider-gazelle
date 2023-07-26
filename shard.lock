@@ -2,7 +2,7 @@ version: 2.0
 shards:
   action-controller:
     git: https://github.com/spider-gazelle/action-controller.git
-    version: 6.1.2
+    version: 7.0.4
 
   ameba:
     git: https://github.com/veelenga/ameba.git
@@ -35,4 +35,8 @@ shards:
   lucky_router:
     git: https://github.com/luckyframework/lucky_router.git
     version: 0.5.2
+
+  worker_pool:
+    git: https://github.com/spider-gazelle/worker_pool.git
+    version: 2.0.2
 

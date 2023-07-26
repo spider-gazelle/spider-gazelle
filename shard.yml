@@ -5,7 +5,7 @@ dependencies:
   # The server framework
   action-controller:
     github: spider-gazelle/action-controller
-    version: ~> 6.1
+    version: ~> 7.0
 
 development_dependencies:
   ameba:
