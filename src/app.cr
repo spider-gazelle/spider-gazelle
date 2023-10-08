@@ -6,7 +6,8 @@ module App
   port = DEFAULT_PORT
   host = DEFAULT_HOST
   process_count = DEFAULT_PROCESS_COUNT
-  exit_code = nil
+  docs = nil
+  docs_file = nil
 
   # Command line options
   OptionParser.parse(ARGV.dup) do |parser|
@@ -49,11 +50,8 @@ module App
       ).to_yaml
 
       parser.on("-f FILE", "--file=FILE", "Save the docs to a file") do |file|
-        File.write(file, docs)
+        docs_file = file
       end
-
-      puts docs
-      exit_code = 0
     end
 
     parser.on("-h", "--help", "Show this help") do
@@ -62,8 +60,10 @@ module App
     end
   end
 
-  if exit_code
-    exit exit_code
+  if docs
+    File.write(docs_file.as(String), docs) if docs_file
+    puts docs_file ? "OpenAPI written to: #{docs_file}" : docs
+    exit 0
   end
 
   # Load the routes
