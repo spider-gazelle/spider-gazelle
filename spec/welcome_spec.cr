@@ -1,12 +1,12 @@
 require "./spec_helper"
 
-describe Welcome do
+describe App::Welcome do
   # ==============
   #  Unit Testing
   # ==============
   it "should generate a date string" do
     # instantiate the controller you wish to unit test
-    welcome = Welcome.spec_instance(HTTP::Request.new("GET", "/"))
+    welcome = App::Welcome.spec_instance(HTTP::Request.new("GET", "/"))
 
     # Test the instance methods of the controller
     welcome.set_date_header.should contain("GMT")

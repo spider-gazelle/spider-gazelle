@@ -1,5 +1,5 @@
 # description of the welcome klass
-class Welcome < Application
+class App::Welcome < App::Base
   base "/"
 
   # A welcome message

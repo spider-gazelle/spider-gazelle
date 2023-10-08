@@ -1,9 +1,9 @@
 require "uuid"
 require "yaml"
 
-abstract class Application < ActionController::Base
+abstract class App::Base < ActionController::Base
   # Configure your log source name
-  # NOTE:: this is chaining from App::Log
+  # NOTE:: this is chaining from Log
   Log = ::App::Log.for("controller")
 
   # framework uses "application/json" by default
