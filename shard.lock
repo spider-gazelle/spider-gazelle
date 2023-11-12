@@ -2,7 +2,7 @@ version: 2.0
 shards:
   action-controller:
     git: https://github.com/spider-gazelle/action-controller.git
-    version: 7.2.3
+    version: 7.3.0
 
   ameba:
     git: https://github.com/veelenga/ameba.git
@@ -15,10 +15,6 @@ shards:
   exception_page:
     git: https://github.com/crystal-loot/exception_page.git
     version: 0.3.1
-
-  future:
-    git: https://github.com/crystal-community/future.cr.git
-    version: 1.0.0
 
   habitat:
     git: https://github.com/luckyframework/habitat.git
