@@ -2,11 +2,11 @@ version: 2.0
 shards:
   action-controller:
     git: https://github.com/spider-gazelle/action-controller.git
-    version: 7.3.0
+    version: 7.4.1
 
   ameba:
     git: https://github.com/veelenga/ameba.git
-    version: 1.5.0
+    version: 1.6.1
 
   backtracer:
     git: https://github.com/sija/backtracer.cr.git
@@ -14,7 +14,7 @@ shards:
 
   exception_page:
     git: https://github.com/crystal-loot/exception_page.git
-    version: 0.3.1
+    version: 0.4.1
 
   habitat:
     git: https://github.com/luckyframework/habitat.git

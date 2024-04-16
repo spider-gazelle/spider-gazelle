@@ -13,11 +13,11 @@ module App
   OptionParser.parse(ARGV.dup) do |parser|
     parser.banner = "Usage: #{PROGRAM_NAME} [arguments]"
 
-    parser.on("-b HOST", "--bind=HOST", "Specifies the server host") { |h| host = h }
-    parser.on("-p PORT", "--port=PORT", "Specifies the server port") { |p| port = p.to_i }
+    parser.on("-b HOST", "--bind=HOST", "Specifies the server host") { |bind_host| host = bind_host }
+    parser.on("-p PORT", "--port=PORT", "Specifies the server port") { |bind_port| port = bind_port.to_i }
 
-    parser.on("-w COUNT", "--workers=COUNT", "Specifies the number of processes to handle requests") do |w|
-      process_count = w.to_i
+    parser.on("-w COUNT", "--workers=COUNT", "Specifies the number of processes to handle requests") do |workers|
+      process_count = workers.to_i
     end
 
     parser.on("-r", "--routes", "List the application routes") do
@@ -81,23 +81,12 @@ module App
   # Clustering using processes, there is no forking once crystal threads drop
   server.cluster(process_count, "-w", "--workers") if process_count != 1
 
-  {% if flag?(:win32) %}
-    Process.on_interrupt do
-      puts " > terminating gracefully"
-      server.close
-    end
-  {% else %}
-    terminate = Proc(Signal, Nil).new do |signal|
-      puts " > terminating gracefully"
-      spawn { server.close }
-      signal.ignore
-    end
+  Process.on_terminate do
+    puts "\n > terminating gracefully"
+    server.close
+  end
 
-    # Detect ctr-c to shutdown gracefully
-    # Docker containers use the term signal
-    Signal::INT.trap &terminate
-    Signal::TERM.trap &terminate
-
+  {% unless flag?(:win32) %}
     # Allow signals to change the log level at run-time
     # Turn on DEBUG level logging `kill -s USR1 %PID`
     register_severity_switch_signals
