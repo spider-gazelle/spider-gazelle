@@ -2,7 +2,7 @@ version: 2.0
 shards:
   action-controller:
     git: https://github.com/spider-gazelle/action-controller.git
-    version: 7.4.1
+    version: 7.4.2
 
   ameba:
     git: https://github.com/veelenga/ameba.git
@@ -18,7 +18,7 @@ shards:
 
   habitat:
     git: https://github.com/luckyframework/habitat.git
-    version: 0.4.8
+    version: 0.4.9
 
   hot_topic:
     git: https://github.com/jgaskins/hot_topic.git
