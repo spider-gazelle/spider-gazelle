@@ -1,4 +1,4 @@
-FROM 84codes/crystal:latest-alpine as build
+FROM 84codes/crystal:latest-alpine AS build
 WORKDIR /app
 
 # Create a non-privileged user, defaults are appuser:10001
