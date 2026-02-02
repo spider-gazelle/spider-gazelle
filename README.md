@@ -20,7 +20,7 @@ Detailed documentation and guides available: https://spider-gazelle.net/
   * Headers
   * Params etc
 
-Spider-Gazelle builds on the amazing performance of [lucky_router](https://github.com/luckyframework/lucky_router).:rocket:
+Spider-Gazelle builds on the amazing performance of [lucky_router](https://github.com/luckyframework/lucky_router). :rocket:
 
 ## Testing
 
