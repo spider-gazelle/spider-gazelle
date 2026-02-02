@@ -12,8 +12,7 @@ Detailed documentation and guides available: https://spider-gazelle.net/
 * [Action Controller](https://github.com/spider-gazelle/action-controller) base class for building [Controllers](http://guides.rubyonrails.org/action_controller_overview.html)
 * [Active Model](https://github.com/spider-gazelle/active-model) base class for building [ORMs](https://en.wikipedia.org/wiki/Object-relational_mapping)
 * [Habitat](https://github.com/luckyframework/habitat) configuration and settings for Crystal projects
-* [router.cr](https://github.com/tbrand/router.cr) base request handling
-* [Radix](https://github.com/luislavena/radix) Radix Tree implementation for request routing
+* [lucky_router](https://github.com/luckyframework/lucky_router) base request handling and routing
 * [HTTP::Server](https://crystal-lang.org/api/latest/HTTP/Server.html) built-in Crystal Lang HTTP server
   * Request
   * Response
@@ -21,9 +20,7 @@ Detailed documentation and guides available: https://spider-gazelle.net/
   * Headers
   * Params etc
 
-
-Spider-Gazelle builds on the amazing performance of **router.cr** [here](https://github.com/tbrand/which_is_the_fastest).:rocket:
-
+Spider-Gazelle builds on the amazing performance of [lucky_router](https://github.com/luckyframework/lucky_router).:rocket:
 
 ## Testing
 
