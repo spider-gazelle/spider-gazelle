@@ -2,7 +2,7 @@ version: 2.0
 shards:
   action-controller:
     git: https://github.com/spider-gazelle/action-controller.git
-    version: 7.6.1
+    version: 8.0.0
 
   ameba:
     git: https://github.com/veelenga/ameba.git
@@ -26,7 +26,7 @@ shards:
 
   json-schema:
     git: https://github.com/spider-gazelle/json-schema.git
-    version: 1.3.2
+    version: 1.3.3
 
   lucky_router:
     git: https://github.com/luckyframework/lucky_router.git
