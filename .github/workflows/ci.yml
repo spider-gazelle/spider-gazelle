@@ -17,7 +17,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     container: crystallang/crystal:${{ matrix.crystal }}-alpine
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Install dependencies
       run: shards install --ignore-crystal-version
     - name: Format
