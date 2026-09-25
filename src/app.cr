@@ -79,7 +79,10 @@ module App
 
   # (process_count < 1) == `System.cpu_count` but this is not always accurate
   # Clustering using processes, there is no forking once crystal threads drop
-  server.cluster(process_count, "-w", "--workers") if process_count != 1
+  server.cluster(process_count, "-w", "--workers")
+
+  # alternatively use threads
+  # server.threads(process_count)
 
   Process.on_terminate do
     puts "\n > terminating gracefully"
