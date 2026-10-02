@@ -5,7 +5,7 @@ module App
   # Server defaults
   port = DEFAULT_PORT
   host = DEFAULT_HOST
-  process_count = DEFAULT_PROCESS_COUNT
+  thread_count = DEFAULT_THREAD_COUNT
   docs = nil
   docs_file = nil
 
@@ -16,8 +16,8 @@ module App
     parser.on("-b HOST", "--bind=HOST", "Specifies the server host") { |bind_host| host = bind_host }
     parser.on("-p PORT", "--port=PORT", "Specifies the server port") { |bind_port| port = bind_port.to_i }
 
-    parser.on("-w COUNT", "--workers=COUNT", "Specifies the number of processes to handle requests") do |workers|
-      process_count = workers.to_i
+    parser.on("-w COUNT", "--workers=COUNT", "Specifies the number of threads to handle requests") do |workers|
+      thread_count = workers.to_i
     end
 
     parser.on("-r", "--routes", "List the application routes") do
@@ -86,12 +86,12 @@ module App
   # Model Context Protocol endpoint for LLM clients
   ActionController::MCPServer.mount(server, MCP_PATH) unless MCP_PATH.empty?
 
-  # (process_count < 1) == `System.cpu_count` but this is not always accurate
-  # Clustering using processes, there is no forking once crystal threads drop
-  server.cluster(process_count, "-w", "--workers")
+  # `System.cpu_count` is not always accurate
+  # Clustering using processes, forking is deprecated
+  # server.cluster(thread_count, "-w", "--workers")
 
   # alternatively use threads
-  # server.threads(process_count)
+  server.threads(thread_count)
 
   Process.on_terminate do
     puts "\n > terminating gracefully"
@@ -100,7 +100,7 @@ module App
 
   {% unless flag?(:win32) %}
     # Allow signals to change the log level at run-time
-    # Turn on DEBUG level logging `kill -s USR1 %PID`
+    # Toggle TRACE level logging `kill -s USR1 %PID`
     register_severity_switch_signals
   {% end %}
 

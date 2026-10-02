@@ -8,8 +8,8 @@ class App::Welcome < App::Base
     welcome_text = "You're being trampled by Spider-Gazelle!"
     Log.warn { "logs can be collated using the request ID" }
 
-    # You can use signals to change log levels at runtime
-    # USR1 is debugging, USR2 is info
+    # You can use signals to change log levels at runtime,
+    # USR1 toggles trace level logging for the application logs
     # `kill -s USR1 %APP_PID`
     Log.debug { "use signals to change log levels at runtime" }
 

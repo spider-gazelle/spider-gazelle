@@ -121,7 +121,8 @@ USER appuser:appuser
 # Spider-gazelle has a built in helper for health checks (change this as desired for your applications)
 HEALTHCHECK CMD ["/app", "-c", "http://127.0.0.1:3000/"]
 
-# Run the app binding on port 3000
+# Run the app binding on port 3000.
+# CMD holds the default arguments to the ENTRYPOINT, override them with `docker run <image> <args>`
 EXPOSE 3000
 ENTRYPOINT ["/app"]
-CMD ["/app", "-b", "0.0.0.0", "-p", "3000"]
+CMD ["-b", "0.0.0.0", "-p", "3000"]

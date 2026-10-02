@@ -12,9 +12,9 @@ module App
   ENVIRONMENT   = ENV["SG_ENV"]? || "development"
   IS_PRODUCTION = ENVIRONMENT == "production"
 
-  DEFAULT_PORT          = (ENV["SG_SERVER_PORT"]? || 3000).to_i
-  DEFAULT_HOST          = ENV["SG_SERVER_HOST"]? || "127.0.0.1"
-  DEFAULT_PROCESS_COUNT = (ENV["SG_PROCESS_COUNT"]? || 1).to_i
+  DEFAULT_PORT         = (ENV["SG_SERVER_PORT"]? || 3000).to_i
+  DEFAULT_HOST         = ENV["SG_SERVER_HOST"]? || "127.0.0.1"
+  DEFAULT_THREAD_COUNT = (ENV["SG_WORKER_COUNT"]? || 1).to_i
 
   STATIC_FILE_PATH = ENV["PUBLIC_WWW_PATH"]? || "./www"
 
@@ -34,10 +34,9 @@ module App
   # Registers callbacks for USR1 signal
   #
   # **`USR1`**
-  # toggles `:trace` for _all_ `Log` instances
-  # `namespaces`'s `Log`s to `:info` if `production` is `true`,
-  # otherwise it is set to `:debug`.
-  # `Log`'s not registered under `namespaces` are toggled to `default`
+  # toggles the application logs (`NAME.*`) between `:trace` and their default level,
+  # `:info` in production and `:debug` otherwise.
+  # Other log sources, such as `action-controller.*`, are not changed.
   #
   # ## Usage
   # - `$ kill -USR1 ${the_application_pid}`
