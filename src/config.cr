@@ -10,6 +10,9 @@ require "./models/*"
 # Server required after application controllers
 require "action-controller/server"
 
+# Exposes the application routes to LLM clients, see the README
+require "action-controller/mcp"
+
 module App
   # Configure logging (backend defined in constants.cr)
   if running_in_production?
@@ -42,6 +45,25 @@ module App
     ActionController::Server.before(
       ::HTTP::StaticFileHandler.new(STATIC_FILE_PATH, directory_listing: false)
     )
+  end
+
+  # Configure the MCP server, tools are generated from your routes and
+  # their descriptions from your code comments
+  ActionController::MCPServer.tap do |mcp|
+    mcp.server_name = NAME
+    mcp.server_version = VERSION
+    mcp.description_path = ENV["SG_MCP_DESCRIPTION"]? || "mcp.yml"
+
+    # Optional authentication, see the action-controller README for details.
+    # Validates the credentials of every MCP request using an existing route
+    # mcp.auth_probe = "/api/users/current"
+    # Advertises your OAuth server, so MCP clients can sign users in
+    # mcp.resource_metadata = ->(request : HTTP::Request) do
+    #   ActionController::MCPServer::ResourceMetadata.new(
+    #     authorization_servers: ["https://#{request.hostname}"],
+    #     scopes_supported: ["public"],
+    #   )
+    # end
   end
 
   # Configure session cookies

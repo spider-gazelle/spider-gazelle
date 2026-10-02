@@ -18,6 +18,9 @@ module App
 
   STATIC_FILE_PATH = ENV["PUBLIC_WWW_PATH"]? || "./www"
 
+  # MCP (Model Context Protocol) endpoint, set to an empty string to disable it
+  MCP_PATH = ENV["SG_MCP_PATH"]? || "/mcp"
+
   COOKIE_SESSION_KEY    = ENV["COOKIE_SESSION_KEY"]? || "_spider_gazelle_"
   COOKIE_SESSION_SECRET = ENV["COOKIE_SESSION_SECRET"]? || "4f74c0b358d5bab4000dd3c75465dc2c"
 

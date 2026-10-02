@@ -22,6 +22,79 @@ Detailed documentation and guides available: https://spider-gazelle.net/
 
 Spider-Gazelle builds on the amazing performance of [lucky_router](https://github.com/luckyframework/lucky_router). :rocket:
 
+## OpenAPI
+
+Routes defined with annotations are described in an [OpenAPI](https://www.openapis.org/)
+document, generated from the code:
+
+* **Routes and parameters** come from the route annotations and method signatures.
+* **Descriptions** come from the doc comments directly above controllers and methods.
+* **Parameter details** come from `@[AC::Param::Info(description: "...", example: "...")]`.
+* **Request and response schemas** come from the argument and return types.
+
+```crystal
+# Returns the example number provided as the result
+@[AC::Route::GET("/api/:example")]
+def api(
+  @[AC::Param::Info(description: "provide an example number to have it returned as the result", example: "3")]
+  example : Int32,
+) : NamedTuple(result: Int32)
+  {result: example}
+end
+```
+
+Comments are extracted with `crystal docs`, so the document is generated where the
+source code is available:
+
+```shell
+./app --docs                    # print the document
+./app --docs --file=openapi.yml # save it
+```
+
+The Dockerfile generates `openapi.yml` during the build and copies it into the image.
+The template serves it at `GET /openapi`.
+
+## MCP Server
+
+The application is also an [MCP](https://modelcontextprotocol.io) server, so LLM
+clients (Claude Code, Claude Desktop, VS Code, Cursor, ...) can use your API. It's
+served at `/mcp` over the Streamable HTTP transport.
+
+```shell
+claude mcp add --transport http my-app http://localhost:3000/mcp
+```
+
+* **Tools:** every annotated route is a tool, described by the same comments and
+  annotations as the OpenAPI docs. Controllers are grouped into toolboxes, and a
+  session starts with `list_toolboxes`, `open_toolbox` and `close_toolbox`, so the
+  model only loads the tools it needs.
+* **Prompts:** reusable message templates users can pick in their client. Mark a
+  method with `@[AC::MCP(prompt: true)]`. It returns a `String`, or an
+  `Array(AC::PromptMessage)` for a conversation. Prompts aren't HTTP routes, but
+  their arguments are parsed and your filters run exactly as for routes. See
+  `Welcome#number_fact` for an example.
+* **Visibility:**
+  * `@[AC::MCP(hide: true)]` excludes a route or controller (see `Welcome#openapi`).
+  * `@[AC::MCP(root: true)]` makes a tool or prompt available without opening its
+    toolbox.
+* **Descriptions:** like the OpenAPI docs, these need the source code, so the
+  Dockerfile generates `mcp.yml` (`./app --mcp=mcp.yml`) and ships it with the
+  binary. Without it, the server still works but descriptions are missing.
+* **Authentication:** optional, and off by default. Your routes' own authentication
+  applies to every tool call (`Authorization`, `Cookie` and `X-API-Key` headers are
+  forwarded). To have MCP clients sign users in with OAuth, uncomment
+  `auth_probe` and `resource_metadata` in `src/config.cr`.
+
+Configuration lives in `src/config.cr`. The environment variables are:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `SG_MCP_PATH` | `/mcp` | Endpoint path, an empty string disables the MCP server |
+| `SG_MCP_DESCRIPTION` | `mcp.yml` | Location of the generated tool descriptions |
+
+See the [action-controller README](https://github.com/spider-gazelle/action-controller#mcp-server)
+for the full reference.
+
 ## Testing
 
 `crystal spec`
@@ -39,3 +112,5 @@ Once compiled you are left with a binary `./app`
 * for help `./app --help`
 * viewing routes `./app --routes`
 * run on a different port or host `./app -b 0.0.0.0 -p 80`
+* generate the OpenAPI docs `./app --docs --file=openapi.yml`
+* generate the MCP tool descriptions `./app --mcp=mcp.yml`

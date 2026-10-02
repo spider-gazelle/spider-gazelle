@@ -81,8 +81,10 @@ RUN for binary in /app/bin/*; do \
         xargs -I % sh -c 'mkdir -p $(dirname deps%); cp % deps%;'; \
     done
 
-# Generate OpenAPI docs while we still have source code access
-RUN ./bin/app --docs --file=openapi.yml
+# Generate OpenAPI docs and MCP tool descriptions while we still have source code access,
+# both extract descriptions from your code comments
+RUN ./bin/app --docs --file=openapi.yml && \
+    ./bin/app --mcp=mcp.yml
 
 # Build a minimal docker image
 FROM scratch
@@ -109,6 +111,9 @@ COPY --from=build /app/bin /
 
 # Copy the docs into the container, you can serve this file in your app
 COPY --from=build /app/openapi.yml /openapi.yml
+
+# MCP tool descriptions, loaded by the MCP server on first use
+COPY --from=build /app/mcp.yml /mcp.yml
 
 # Use an unprivileged user.
 USER appuser:appuser

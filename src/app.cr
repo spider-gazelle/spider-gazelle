@@ -54,6 +54,12 @@ module App
       end
     end
 
+    parser.on("--mcp=FILE", "Saves the MCP tool descriptions, generated from your code comments") do |file|
+      ActionController::MCPServer.write_description(file)
+      puts "MCP description written to: #{file}"
+      exit 0
+    end
+
     parser.on("-h", "--help", "Show this help") do
       puts parser
       exit 0
@@ -76,6 +82,9 @@ require "./config"
 
 module App
   server = ActionController::Server.new(port, host)
+
+  # Model Context Protocol endpoint for LLM clients
+  ActionController::MCPServer.mount(server, MCP_PATH) unless MCP_PATH.empty?
 
   # (process_count < 1) == `System.cpu_count` but this is not always accurate
   # Clustering using processes, there is no forking once crystal threads drop
