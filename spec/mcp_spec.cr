@@ -44,7 +44,7 @@ describe "MCP server" do
     tools.should_not contain "welcome_openapi"
 
     result = rpc.call("tools/call", {"name" => JSON::Any.new("welcome_api"), "arguments" => JSON.parse(%({"example": 42}))})
-    result["structuredContent"].should eq({"result" => 42})
+    result["structuredContent"].should eq({"status" => 200, "body" => {"result" => 42}})
   end
 
   it "serves the example prompt" do
