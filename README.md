@@ -67,7 +67,8 @@ claude mcp add --transport http my-app http://localhost:3000/mcp
 * **Tools:** every annotated route is a tool, described by the same comments and
   annotations as the OpenAPI docs. Controllers are grouped into toolboxes, and a
   session starts with `list_toolboxes`, `open_toolbox` and `close_toolbox`, so the
-  model only loads the tools it needs.
+  model only loads the tools it needs. Clients that don't refresh their tools when
+  a toolbox opens (currently Claude and ChatGPT) run them through `call_tool`.
 * **Prompts:** reusable message templates users can pick in their client. Mark a
   method with `@[AC::MCP(prompt: true)]`. It returns a `String`, or an
   `Array(AC::PromptMessage)` for a conversation. Prompts aren't HTTP routes, but
