@@ -66,9 +66,10 @@ claude mcp add --transport http my-app http://localhost:3000/mcp
 
 * **Tools:** every annotated route is a tool, described by the same comments and
   annotations as the OpenAPI docs. Controllers are grouped into toolboxes, and a
-  session starts with `list_toolboxes`, `open_toolbox` and `close_toolbox`, so the
-  model only loads the tools it needs. Clients that don't refresh their tools when
-  a toolbox opens (currently Claude and ChatGPT) run them through `call_tool`.
+  session starts with `list_toolboxes`, `open_toolbox`, `close_toolbox`,
+  `call_read_only` and `call_tool`, so the model only loads the tools it needs.
+  Clients that don't refresh their tools when a toolbox opens (currently Claude and
+  ChatGPT) run them through `call_read_only` (read only tools) or `call_tool`.
 * **UI cards:** `@[AC::MCP(ui: "welcome/result.html")]` renders `cards/welcome/result.html`
   for the tool's results in MCP clients that support [MCP Apps](https://github.com/modelcontextprotocol/ext-apps),
   such as Claude and ChatGPT. See `Welcome#api` and the card for an example.
@@ -77,10 +78,13 @@ claude mcp add --transport http my-app http://localhost:3000/mcp
   `Array(AC::PromptMessage)` for a conversation. Prompts aren't HTTP routes, but
   their arguments are parsed and your filters run exactly as for routes. See
   `Welcome#number_fact` for an example.
-* **Visibility:**
+* **Annotation options:**
   * `@[AC::MCP(hide: true)]` excludes a route or controller (see `Welcome#openapi`).
   * `@[AC::MCP(root: true)]` makes a tool or prompt available without opening its
     toolbox.
+  * `title:`, `behaviour:` (e.g. `:read_only`, `[:additive, :open_world]`),
+    `visibility:` (`:model` or `:card`) and `@[AC::Icon(src: ...)]` describe tools
+    further. See the [annotation options](https://spider-gazelle.net/mcp/prompts/).
 * **Descriptions:** like the OpenAPI docs, these need the source code, so the
   Dockerfile generates `mcp.yml` (`./app --mcp=mcp.yml`) and ships it with the
   binary. Without it, the server still works but descriptions are missing.
