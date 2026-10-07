@@ -21,7 +21,12 @@ class App::Welcome < App::Base
   # the various responses are returned based on the Accepts header.
   # Doc comments directly above a route describe it in the OpenAPI docs and MCP tools.
 
+  # MCP clients that support MCP Apps render the result with cards/welcome/result.html.
+  # `root: true` lists the tool without opening the welcome toolbox, so the card renders
+  # in clients that don't refresh their tools when a toolbox opens
+
   # Returns the example number provided as the result
+  @[AC::MCP(ui: "welcome/result.html", root: true)]
   @[AC::Route::GET("/api/:example")]
   @[AC::Route::POST("/api/:example")]
   @[AC::Route::GET("/api/other/route")]

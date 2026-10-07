@@ -115,6 +115,10 @@ COPY --from=build /app/openapi.yml /openapi.yml
 # MCP tool descriptions, loaded by the MCP server on first use
 COPY --from=build /app/mcp.yml /mcp.yml
 
+# Static files and MCP Apps cards
+COPY ./www /www
+COPY ./cards /cards
+
 # Use an unprivileged user.
 USER appuser:appuser
 

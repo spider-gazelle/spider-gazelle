@@ -54,6 +54,11 @@ module App
     mcp.server_version = VERSION
     mcp.description_path = ENV["SG_MCP_DESCRIPTION"]? || "mcp.yml"
 
+    # MCP Apps cards, `@[AC::MCP(ui: "welcome/result.html")]` renders cards/welcome/result.html
+    mcp.ui_base = MCP_UI_PATH if File.directory?(MCP_UI_PATH)
+    # the default card settings, a card can override them with a `.meta.json` file next to it
+    mcp.ui_meta = ActionController::MCPServer::UIMeta.new(prefers_border: true)
+
     # Optional authentication, see the action-controller README for details.
     # Validates the credentials of every MCP request using an existing route
     # mcp.auth_probe = "/api/users/current"

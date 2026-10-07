@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Result</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: var(--color-background-primary, #ffffff);
+      --fg: var(--color-text-primary, #1f2328);
+      --muted: var(--color-text-secondary, #656d76);
+      --accent: var(--color-text-info, #0969da);
+      font-family: var(--font-sans, system-ui, sans-serif);
+    }
+    [data-theme="dark"] {
+      --bg: var(--color-background-primary, #0d1117);
+      --fg: var(--color-text-primary, #e6edf3);
+      --muted: var(--color-text-secondary, #8d96a0);
+      --accent: var(--color-text-info, #4493f8);
+    }
+    body { margin: 0; padding: 16px; background: var(--bg); color: var(--fg); }
+    .card { display: flex; align-items: baseline; gap: 12px; }
+    .result { font-size: 48px; font-weight: var(--font-weight-semibold, 600); color: var(--accent); }
+    .label { color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <span class="result" id="result">…</span>
+    <span class="label" id="label">waiting for the result</span>
+  </div>
+
+  <script>
+    // An MCP Apps card: the host renders it for the `welcome_api` tool and sends it the
+    // tool's arguments and result. It talks to the host with JSON-RPC over postMessage,
+    // see https://github.com/modelcontextprotocol/ext-apps (no SDK required)
+    let nextId = 1;
+    const pending = {};
+
+    const send = (message) => window.parent.postMessage({ jsonrpc: "2.0", ...message }, "*");
+    const request = (method, params) => new Promise((resolve) => {
+      const id = nextId++;
+      pending[id] = resolve;
+      send({ id, method, params });
+    });
+
+    const applyTheme = (context) => {
+      if (context?.theme) document.documentElement.dataset.theme = context.theme;
+      for (const [name, value] of Object.entries(context?.styles?.variables || {})) {
+        if (value) document.documentElement.style.setProperty(name, value);
+      }
+    };
+
+    // tool results are {status, headers, body}, the route's response
+    const showResult = (result) => {
+      const body = result.structuredContent?.body;
+      if (result.isError || body?.result === undefined) {
+        document.getElementById("result").textContent = "!";
+        document.getElementById("label").textContent = "the request failed";
+        return;
+      }
+      document.getElementById("result").textContent = body.result;
+      document.getElementById("label").textContent = "is the result";
+    };
+
+    window.addEventListener("message", (event) => {
+      if (event.source !== window.parent) return;
+      const message = event.data;
+      if (message?.jsonrpc !== "2.0") return;
+
+      if (message.id !== undefined && pending[message.id]) {
+        pending[message.id](message.result);
+        delete pending[message.id];
+      } else if (message.method === "ui/notifications/tool-input") {
+        const example = message.params?.arguments?.example;
+        if (example !== undefined) document.getElementById("label").textContent = `calculating ${example}`;
+      } else if (message.method === "ui/notifications/tool-result") {
+        showResult(message.params);
+      } else if (message.method === "ui/notifications/host-context-changed") {
+        applyTheme(message.params);
+      }
+    });
+
+    // let the host size the frame to the content
+    new ResizeObserver(() => {
+      send({ method: "ui/notifications/size-changed", params: { height: Math.ceil(document.body.getBoundingClientRect().height) } });
+    }).observe(document.body);
+
+    request("ui/initialize", {
+      protocolVersion: "2026-01-26",
+      appInfo: { name: "welcome-result", version: "1.0.0" },
+      appCapabilities: {},
+    }).then((result) => {
+      applyTheme(result?.hostContext);
+      send({ method: "ui/notifications/initialized" });
+    });
+  </script>
+</body>
+</html>
