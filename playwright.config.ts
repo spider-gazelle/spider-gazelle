@@ -20,7 +20,7 @@ export default defineConfig({
   },
   webServer: {
     // a development build, release builds don't include the card previewer
-    command: `crystal build src/app.cr -o bin/app && ./bin/app -p ${port}`,
+    command: `mkdir -p bin && crystal build src/app.cr -o bin/app && ./bin/app -p ${port}`,
     url: `http://127.0.0.1:${port}/mcp/card/preview`,
     reuseExistingServer: !process.env.CI,
     timeout: 300_000, // the first build can be slow
