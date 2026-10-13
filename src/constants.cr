@@ -24,6 +24,9 @@ module App
   # MCP Apps cards, HTML files rendered by MCP clients for tool results
   MCP_UI_PATH = ENV["SG_MCP_UI"]? || "./cards"
 
+  # MCP Apps card previewer, development builds only. An empty string disables it
+  MCP_PREVIEW_PATH = ENV["SG_MCP_PREVIEW_PATH"]? || "/mcp/card/preview"
+
   COOKIE_SESSION_KEY    = ENV["COOKIE_SESSION_KEY"]? || "_spider_gazelle_"
   COOKIE_SESSION_SECRET = ENV["COOKIE_SESSION_SECRET"]? || "4f74c0b358d5bab4000dd3c75465dc2c"
 

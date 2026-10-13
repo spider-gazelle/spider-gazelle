@@ -6,3 +6,9 @@ app
 *.dwarf
 bin
 .DS_Store
+
+# browser tests
+node_modules
+test-results
+playwright-report
+blob-report

@@ -73,6 +73,8 @@ claude mcp add --transport http my-app http://localhost:3000/mcp
 * **UI cards:** `@[AC::MCP(ui: "welcome/result.html")]` renders `cards/welcome/result.html`
   for the tool's results in MCP clients that support [MCP Apps](https://github.com/modelcontextprotocol/ext-apps),
   such as Claude and ChatGPT. See `Welcome#api` and the card for an example.
+  In development, open <http://localhost:3000/mcp/card/preview> to try cards in your
+  browser at desktop, tablet and mobile sizes. Release builds leave the previewer out.
 * **Prompts:** reusable message templates users can pick in their client. Mark a
   method with `@[AC::MCP(prompt: true)]`. It returns a `String`, or an
   `Array(AC::PromptMessage)` for a conversation. Prompts aren't HTTP routes, but
@@ -100,6 +102,7 @@ Configuration lives in `src/config.cr`. The environment variables are:
 | `SG_MCP_PATH` | `/mcp` | Endpoint path, an empty string disables the MCP server |
 | `SG_MCP_DESCRIPTION` | `mcp.yml` | Location of the generated tool descriptions |
 | `SG_MCP_UI` | `./cards` | Folder of MCP Apps cards, HTML rendered by MCP clients for tool results |
+| `SG_MCP_PREVIEW_PATH` | `/mcp/card/preview` | Card previewer, development builds only. An empty string disables it |
 
 See the [action-controller README](https://github.com/spider-gazelle/action-controller#mcp-server)
 for the full reference.
@@ -107,6 +110,9 @@ for the full reference.
 ## Testing
 
 `crystal spec`
+
+* browser tests for the MCP Apps cards: `npm install`, `npx playwright install chromium`,
+  then `npm run test:e2e`. See [e2e/README.md](e2e/README.md)
 
 * to run in development mode `crystal ./src/app.cr`
 

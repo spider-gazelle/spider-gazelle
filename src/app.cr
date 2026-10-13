@@ -106,6 +106,12 @@ module App
 
   # Start the server
   server.run do
+    # Renders the MCP Apps cards in a browser, for development and browser tests.
+    # Release builds leave it out, its pages are served without authentication
+    {% unless flag?(:release) %}
+      server.mount_mcp_card_previewer(MCP_PREVIEW_PATH) unless MCP_PATH.empty? || MCP_PREVIEW_PATH.empty?
+    {% end %}
+
     puts "Listening on #{server.print_addresses}"
   end
 

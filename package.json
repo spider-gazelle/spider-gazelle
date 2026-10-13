@@ -1,0 +1,11 @@
+{
+  "name": "spider-gazelle-e2e",
+  "private": true,
+  "description": "Browser tests for the MCP Apps cards, run against the card previewer",
+  "scripts": {
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.59.1"
+  }
+}
