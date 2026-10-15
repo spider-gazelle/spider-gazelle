@@ -18,30 +18,25 @@ describe "MCP server" do
     JSON.parse(response.body)["result"]
   end
 
-  initialize_result = JSON::Any.new(nil)
-
-  # every request after `initialize` belongs to the session
-  before_all do
-    response = client.post(App::MCP_PATH, headers: headers, body: {
-      jsonrpc: "2.0", id: 1, method: "initialize", params: {protocolVersion: "2025-11-25"},
-    }.to_json)
-    response.status_code.should eq 200
-    headers["Mcp-Session-Id"] = response.headers["Mcp-Session-Id"]
-    initialize_result = JSON.parse(response.body)["result"]
-  end
-
-  it "establishes a session" do
-    initialize_result["serverInfo"]["name"].should eq App::NAME
-    initialize_result["capabilities"]["prompts"]["listChanged"].should be_true
+  # the server is stateless: there's no session, so each request stands alone
+  it "initializes" do
+    result = rpc.call("initialize", {"protocolVersion" => JSON::Any.new("2025-11-25")})
+    result["serverInfo"]["name"].should eq App::NAME
+    result["capabilities"]["prompts"]["listChanged"].should be_false
   end
 
   it "exposes the routes as tools" do
-    rpc.call("tools/call", {"name" => JSON::Any.new("open_toolbox"), "arguments" => JSON.parse(%({"name": "welcome"}))})
+    # tools with a card are root items, always listed
     tools = rpc.call("tools/list", {} of String => JSON::Any)["tools"].as_a.map(&.["name"].as_s)
     tools.should contain "welcome_api"
 
+    # other tools are in the controller's toolbox, opening it returns their definitions
+    opened = rpc.call("tools/call", {"name" => JSON::Any.new("open_toolbox"), "arguments" => JSON.parse(%({"name": "welcome"}))})
+    toolbox = opened["structuredContent"]["tools"].as_a.map(&.["name"].as_s)
+    toolbox.should contain "welcome_index"
+
     # hidden with `@[AC::MCP(hide: true)]`
-    tools.should_not contain "welcome_openapi"
+    (tools + toolbox).should_not contain "welcome_openapi"
 
     result = rpc.call("tools/call", {"name" => JSON::Any.new("welcome_api"), "arguments" => JSON.parse(%({"example": 42}))})
     result["structuredContent"].should eq({"status" => 200, "body" => {"result" => 42}})
